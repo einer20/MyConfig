@@ -1,0 +1,5 @@
+C:\Projects\MyConfig\MyConfig\bin\Debug\MyConfig.dll
+C:\Projects\MyConfig\MyConfig\bin\Debug\MyConfig.pdb
+C:\Projects\MyConfig\MyConfig\obj\Debug\MyConfig.dll
+C:\Projects\MyConfig\MyConfig\obj\Debug\MyConfig.pdb
+C:\Projects\MyConfig\MyConfig\obj\Debug\MyConfig.csprojResolveAssemblyReference.cache

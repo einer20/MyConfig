@@ -44,9 +44,8 @@
     <Compile Include="Internals\InternalConfiguration.cs" />
     <Compile Include="MyConfigurationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Standars\CategoryStandars.cs" />
-    <Compile Include="ConfigurationCommandParser.cs" />
-    <Compile Include="Standars\Parser.cs" />
+    <Compile Include="Standars\FormatsStandars.cs" />
+    <Compile Include="Standars\MyConfigParser.cs" />
     <Compile Include="Standars\PropertyStandars.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

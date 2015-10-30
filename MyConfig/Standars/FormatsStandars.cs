@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace MyConfig.Standars
 {
-    public sealed class CategoryStandars
+    public sealed class FormatsStandars
     {
 
 
@@ -43,8 +43,15 @@ namespace MyConfig.Standars
 
         public static bool IsValidCategoryName(string name)
         {
+           
             bool isValid = CATEGORY_NAME_EXPRESSION.IsMatch(name);
             return isValid;
         }
+
+        public static bool IsComment(string text)
+        {
+            return text.Trim().StartsWith("//");
+        }
+
     }
 }

@@ -25,7 +25,7 @@ namespace MyConfig
         public Configuration(IConfiguration config)
         {
             this.name = config.ConfigurationName;
-            this.values = this.GetConfigurationValues();
+            this.values = this.GetConfigurations();
         }
 
         public string ConfigurationName
@@ -42,7 +42,7 @@ namespace MyConfig
         /// </summary>
         internal int Index { get; set; }
 
-        public Dictionary<string, object> GetConfigurationValues()
+        public Dictionary<string, object> GetConfigurations()
         {
             return this.values;
         }
@@ -52,5 +52,10 @@ namespace MyConfig
             this.values.Add(propertyName, propertyValue);
         }
 
+
+        public bool HasSettings
+        {
+            get { return this.values != null && values.Any(); }
+        }
     }
 }

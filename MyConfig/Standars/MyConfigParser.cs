@@ -8,12 +8,12 @@ namespace MyConfig.Standars
 {
 
     /// <summary>
-    /// Configuration command parser utils
+    /// Configuration string parser 
     /// </summary>
-    public sealed class Parser
+    public sealed class MyConfigParser
     {
 
-        internal static readonly Regex CommandExpression = new Regex(@"[a-z]+[.][a-z0-9_]+\s*[=]\s*[a-z0-9\/.:_]+", RegexOptions.IgnoreCase);
+        internal static readonly Regex CommandExpression = new Regex(@"[a-z]+[.][a-z0-9_]+\s*[=]\s*[a-z0-9\/.:_|,]+", RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Parse a configuration command user.name='hola' user.password=what

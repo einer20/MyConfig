@@ -20,7 +20,7 @@ namespace MyConfig
         /// Get the configuration values
         /// </summary>
         /// <returns></returns>
-        Dictionary<string, object> GetConfigurationValues();
+        Dictionary<string, object> GetConfigurations();
 
         /// <summary>
         /// Add new property/value to the current configuration
@@ -28,5 +28,10 @@ namespace MyConfig
         /// <param name="propertyName"></param>
         /// <param name="propertyValue"></param>
         void Add(string propertyName, object propertyValue);
+
+        /// <summary>
+        /// Indicates if the current configuration has any settings values applied
+        /// </summary>
+        bool HasSettings { get; }
     }
 }

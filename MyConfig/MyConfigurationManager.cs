@@ -8,15 +8,29 @@ using MyConfig.Standars;
 
 namespace MyConfig
 {
+
+    /// <summary>
+    /// Manage the configuration data saved as the git configuration format(user.name=einer).
+    /// <para>Created by @einersantanar</para>
+    /// </summary>
     public sealed class MyConfigurationManager
     {
+
+        private const string COMMENT = "//";
+
+        /// <summary>
+        /// Initialize a new instance of MyConfigurationManager
+        /// </summary>
+        /// <param name="configFile"></param>
         public MyConfigurationManager(string configFile)
         {
             this.Path = configFile;
         }
 
+        /// <summary>
+        /// Get the path of the configuration file
+        /// </summary>
         public readonly string Path;
-
 
         /// <summary>
         /// Set a configuration to the pointer file
@@ -36,22 +50,28 @@ namespace MyConfig
 
                 for (int i = categoryIndex + 1; i < rawConfig.Count; i++)
                 {
-                    if (CategoryStandars.IsValidCategoryName(rawConfig[i]))
+                    if (FormatsStandars.IsValidCategoryName(rawConfig[i]))
                     {
                         // it is a category name, ignore it
                         continue;
                     }
 
                     string propertyString = rawConfig[i];
+                    bool isComment = FormatsStandars.IsComment(propertyString);
+                    bool isEmpty = String.IsNullOrWhiteSpace(propertyString);
 
-                    var property = Parser.ParseProperty(propertyString);
-
-                    if (configuration.GetConfigurationValues().Any(x => x.Key == property.Key))
+                    if (isComment == false && isEmpty == false)
                     {
-                        var newProperty = configuration.GetConfigurationValues().First(x => x.Key == property.Key);
-                        // update the property
-                        rawConfig[i] = "\t" + newProperty.Key + "=" + newProperty.Value;
+                        var property = MyConfigParser.ParseProperty(propertyString);
+
+                        if (configuration.GetConfigurations().Any(x => x.Key == property.Key))
+                        {
+                            var newProperty = configuration.GetConfigurations().First(x => x.Key == property.Key);
+                            // update the property
+                            rawConfig[i] = "\t" + newProperty.Key + " = " + newProperty.Value;
+                        }
                     }
+
                 }
             }
             else
@@ -65,19 +85,27 @@ namespace MyConfig
                     rawConfig[lastIndexOfArray] += Environment.NewLine + internalModel.ConfigurationNameStandard;
                 }
 
-                foreach (var item in internalModel.GetConfigurationValues())
+                foreach (var item in internalModel.GetConfigurations())
                 {
-                    rawConfig[lastIndexOfArray] += Environment.NewLine + "\t" + item.Key + "=" + item.Value;
+                    rawConfig[lastIndexOfArray] += Environment.NewLine + "\t" + item.Key + " = " + item.Value;
                 }
             }
 
             File.WriteAllLines(this.Path, rawConfig);
         }
 
+        /// <summary>
+        /// Set a configuration by passing the configuration string
+        /// </summary>
+        /// <param name="configurationCommand"></param>
         public void SetConfiguration(string configurationCommand)
         {
-            var config = Parser.ParseConfiguration(configurationCommand);
-            //SetConfiguration(config);
+            var config = MyConfigParser.ParseConfiguration(configurationCommand);
+
+            foreach (var item in config)
+            {
+                SetConfiguration(item);
+            }
         }
 
         /// <summary>
@@ -85,7 +113,7 @@ namespace MyConfig
         /// </summary>
         /// <param name="categoryName"></param>
         /// <returns></returns>
-        public Configuration Find(string categoryName)
+        public IConfiguration Find(string categoryName)
         {
             return this.GetConfigurationByCategory(categoryName);
         }
@@ -94,7 +122,7 @@ namespace MyConfig
         /// Get all configurations
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Configuration> GetConfigurations()
+        public IEnumerable<IConfiguration> GetConfigurations()
         {
             foreach (var item in this.GetCategoriesNames())
             {
@@ -107,12 +135,13 @@ namespace MyConfig
             return File.ReadAllLines(this.Path);
         }
 
-        internal Configuration GetConfigurationByCategory(string categoryName)
+        internal IConfiguration GetConfigurationByCategory(string categoryName)
         {
 
-            if (!CategoryStandars.IsValidCategoryName(categoryName))
+            if (!FormatsStandars.IsValidCategoryName(categoryName))
             {
-                return null;
+                categoryName = categoryName.Replace("[", string.Empty).Replace("]", string.Empty);
+                categoryName = String.Format("[{0}]", categoryName);
             }
 
             Configuration conf = new Configuration(categoryName);
@@ -123,18 +152,24 @@ namespace MyConfig
                 if (data[i] == categoryName)
                 {
                     
-                    conf.Index = i;
-
                     // reading the properties values
                     for (int y = i + 1; y < total; y++)
                     {
-                        if (y >= data.Length || CategoryStandars.IsValidCategoryName(data[y])) 
+                        //|| String.IsNullOrEmpty(data[y]) ||
+                        var trimed = data[y].Trim();
+                        if (y >= data.Length || FormatsStandars.IsValidCategoryName(data[y])) 
                         {
                             break;
                         }
+                        else if (trimed.StartsWith(COMMENT) || String.IsNullOrEmpty(trimed))
+                        {
+                            continue;
+                        }
+                        else{
+                            var property = MyConfigParser.ParseProperty(data[y]);
+                            conf.Add(property.Key, property.Value); 
+                        }
 
-                        var property = Parser.ParseProperty(data[y]);
-                        conf.Add(property.Key, property.Value);
                     }
                 }
             }
@@ -148,7 +183,7 @@ namespace MyConfig
 
             foreach (var item in data)
             {
-                if (CategoryStandars.IsValidCategoryName(item.Trim()))
+                if (FormatsStandars.IsValidCategoryName(item.Trim()))
                 {
                     yield return item;
                 }

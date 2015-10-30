@@ -36,7 +36,7 @@ namespace MyConfig.Standars
         [Obsolete("No usar")]
         public static bool IsValidProperty(string propertyInfo)
         {
-            return Parser.CommandExpression.IsMatch(propertyInfo);
+            return MyConfigParser.CommandExpression.IsMatch(propertyInfo);
         }
     }
 

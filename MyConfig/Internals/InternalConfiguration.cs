@@ -13,7 +13,7 @@ namespace MyConfig.Internals
         public InternalConfiguration( IConfiguration config )
         {
             this.name = config.ConfigurationName;
-            this.values = config.GetConfigurationValues();
+            this.values = config.GetConfigurations();
         }
 
         public string ConfigurationName
@@ -24,7 +24,7 @@ namespace MyConfig.Internals
 
         public string ConfigurationNameStandard { get { return String.Format("[{0}]", this.ConfigurationName); } }
 
-        public Dictionary<string, object> GetConfigurationValues()
+        public Dictionary<string, object> GetConfigurations()
         {
             return this.values;
         }
@@ -37,6 +37,12 @@ namespace MyConfig.Internals
         public bool Equals(string categoryName)
         {
             return this.ConfigurationName == categoryName || this.ConfigurationNameStandard == categoryName;
+        }
+
+
+        public bool HasSettings
+        {
+            get { return this.values.Any(); }
         }
     }
 }
